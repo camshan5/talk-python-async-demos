@@ -35,13 +35,6 @@ def get_title(html: str, episode_number: int) -> str:
     return header.text.strip()
 
 
-def main():
-    global loop
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(get_title_range())
-    print("Done.")
-
-
 async def get_title_range_old_version():
     # Please keep this range pretty small to not DDoS my site. ;)
     for n in range(150, 160):
@@ -62,6 +55,15 @@ async def get_title_range():
         html = await t
         title = get_title(html, n)
         print(Fore.WHITE + f"Title found: {title}", flush=True)
+
+
+def main():
+    global loop
+    loop = asyncio.get_event_loop()
+
+    # loop.run_until_complete(get_title_range_old_version())
+    loop.run_until_complete(get_title_range())
+    print("Done.")
 
 
 if __name__ == "__main__":
