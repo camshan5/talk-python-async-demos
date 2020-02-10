@@ -1,5 +1,7 @@
 import datetime
 import math
+import multiprocessing
+import threading
 
 
 def main():
@@ -7,10 +9,29 @@ def main():
 
     t0 = datetime.datetime.now()
 
-    do_math(num=30000000)
+    # do_math(num=30000000)
+    print(f"Doing math on {multiprocessing.cpu_count():,} processors.")
+
+    # create a bunch of threads
+    processor_count = multiprocessing.cpu_count()
+    threads = []
+    for n in range(1, processor_count + 1):
+        threads.append(
+            threading.Thread(
+                target=do_math,
+                args=(
+                    30_000_000 * (n - 1) / processor_count,
+                    30_000_000 * n / processor_count,
+                ),
+                daemon=True,
+            )
+        )
+
+    [t.start() for t in threads]
+    [t.join() for t in threads]
 
     dt = datetime.datetime.now() - t0
-    print("Done in {:,.2f} sec.".format(dt.total_seconds()))
+    print(f"Done in {dt.total_seconds():,.2f} sec.")
 
 
 def do_math(start=0, num=10):
@@ -18,8 +39,14 @@ def do_math(start=0, num=10):
     k_sq = 1000 * 1000
     while pos < num:
         pos += 1
-        dist = math.sqrt((pos - k_sq)*(pos - k_sq))
+        math.sqrt((pos - k_sq) * (pos - k_sq))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
+    # E.g. Output:
+    # Doing math on 8 processors.
+    # Done in 6.43 sec.
+
+    # GIL is blocking us from getting faster.
+
     main()
