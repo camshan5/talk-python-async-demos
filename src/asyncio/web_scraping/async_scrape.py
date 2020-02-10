@@ -36,7 +36,6 @@ def get_title(html: str, episode_number: int) -> str:
 
 
 async def get_title_range_old_version():
-    # Please keep this range pretty small to not DDoS my site. ;)
     for n in range(150, 160):
         html = await get_html(n)
         title = get_title(html, n)
