@@ -4,17 +4,24 @@ import threading
 
 
 def main():
-    t = threading.Thread(target=greeter, args=("Fitzgerald", 10), daemon=True)
+    threads = [
+        # Create and start the thread
+        threading.Thread(target=greeter, args=("Fitzy", 10), daemon=True),
+        threading.Thread(target=greeter, args=("Phoebe", 5), daemon=True),
+        threading.Thread(target=greeter, args=("Winnie", 2), daemon=True),
+        threading.Thread(target=greeter, args=("Ollie", 11), daemon=True),
+    ]
 
-    # Start the thread we just created
-    t.start()
+    # list comprehension to start all of the threads in the `threads` list
+    [t.start() for t in threads]
 
-    print("\n\tDoing some other work here as apart of our main thread...")
+    print("\n\tDoing some other work here...")
     print(f"\tThe answer to 2 x 2 is: {2 * 2}\n")
+    print("\tEnd of other work\n")
 
     # Waiting for work to complete
     # Releases final print statement after `greeter` completes its loop
-    t.join()
+    [t.join(timeout=1) for t in threads]
 
     print("Done!")
 
